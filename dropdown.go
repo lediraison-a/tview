@@ -103,6 +103,9 @@ func NewDropDown() *DropDown {
 		prefixTextColor:      Styles.ContrastSecondaryTextColor,
 	}
 
+    d.list.SetBackgroundColor(d.fieldBackgroundColor)
+    d.list.SetMainTextColor(d.fieldTextColor)
+
 	return d
 }
 
@@ -183,12 +186,14 @@ func (d *DropDown) SetLabelColor(color tcell.Color) *DropDown {
 // SetFieldBackgroundColor sets the background color of the options area.
 func (d *DropDown) SetFieldBackgroundColor(color tcell.Color) *DropDown {
 	d.fieldBackgroundColor = color
+    d.list.SetBackgroundColor(color)
 	return d
 }
 
 // SetFieldTextColor sets the text color of the options area.
 func (d *DropDown) SetFieldTextColor(color tcell.Color) *DropDown {
 	d.fieldTextColor = color
+    d.list.SetMainTextColor(color)
 	return d
 }
 

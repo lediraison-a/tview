@@ -78,6 +78,18 @@ type Form struct {
 	// The color of the button text.
 	buttonTextColor tcell.Color
 
+	// The background color of the input area which has focus.
+	fieldBackgroundColorActivated tcell.Color
+
+	// The text color of the input area which has focus.
+	fieldTextColorActivcated tcell.Color
+
+	// The background color of the buttons which has focus.
+	buttonBackgroundColorActivated tcell.Color
+
+	// The color of the button text which has focus.
+	buttonTextColorActivated tcell.Color
+
 	// An optional function which is called when the user hits Escape.
 	cancel func()
 }
@@ -87,13 +99,17 @@ func NewForm() *Form {
 	box := NewBox().SetBorderPadding(1, 1, 1, 1)
 
 	f := &Form{
-		Box:                   box,
-		itemPadding:           1,
-		labelColor:            Styles.SecondaryTextColor,
-		fieldBackgroundColor:  Styles.ContrastBackgroundColor,
-		fieldTextColor:        Styles.PrimaryTextColor,
-		buttonBackgroundColor: Styles.ContrastBackgroundColor,
-		buttonTextColor:       Styles.PrimaryTextColor,
+		Box:                            box,
+		itemPadding:                    1,
+		labelColor:                     Styles.SecondaryTextColor,
+		fieldBackgroundColor:           Styles.ContrastBackgroundColor,
+		fieldTextColor:                 Styles.PrimaryTextColor,
+		buttonBackgroundColor:          Styles.ContrastBackgroundColor,
+		buttonTextColor:                Styles.PrimaryTextColor,
+        fieldBackgroundColorActivated:  Styles.PrimaryTextColor,
+        fieldTextColorActivcated:       Styles.ContrastBackgroundColor,
+        buttonBackgroundColorActivated: Styles.PrimaryTextColor,
+        buttonTextColorActivated:       Styles.ContrastBackgroundColor,
 	}
 
 	return f
@@ -134,10 +150,34 @@ func (f *Form) SetFieldTextColor(color tcell.Color) *Form {
 	return f
 }
 
+// SetFieldBackgroundColorActivated sets the background color of the input area which has focus.
+func (f *Form) SetFieldBackgroundColorActivated(color tcell.Color) *Form {
+	f.fieldBackgroundColorActivated = color
+	return f
+}
+
+// SetFieldTextColor sets the text color of the input area which has focus.
+func (f *Form) SetFieldTextColorActivated(color tcell.Color) *Form {
+	f.fieldTextColorActivcated = color
+	return f
+}
+
 // SetButtonsAlign sets how the buttons align horizontally, one of AlignLeft
 // (the default), AlignCenter, and AlignRight. This is only
 func (f *Form) SetButtonsAlign(align int) *Form {
 	f.buttonsAlign = align
+	return f
+}
+
+// SetButtonBackgroundColor sets the background color of the buttons.
+func (f *Form) SetButtonBackgroundColorActivated(color tcell.Color) *Form {
+	f.buttonBackgroundColorActivated = color
+	return f
+}
+
+// SetButtonTextColor sets the color of the button texts.
+func (f *Form) SetButtonTextColorActivated(color tcell.Color) *Form {
+	f.buttonTextColorActivated = color
 	return f
 }
 
@@ -206,10 +246,14 @@ func (f *Form) AddPasswordField(label, value string, fieldWidth int, mask rune, 
 // selected. The initial option may be a negative value to indicate that no
 // option is currently selected.
 func (f *Form) AddDropDown(label string, options []string, initialOption int, selected func(option string, optionIndex int)) *Form {
-	f.items = append(f.items, NewDropDown().
+    d := NewDropDown().
 		SetLabel(label).
 		SetOptions(options, selected).
-		SetCurrentOption(initialOption))
+		SetCurrentOption(initialOption)
+    d.SetFieldBackgroundColor(f.fieldBackgroundColor)
+    d.SetFieldTextColor(f.fieldTextColor)
+
+	f.items = append(f.items, d)
 	return f
 }
 
@@ -483,8 +527,8 @@ func (f *Form) Draw(screen tcell.Screen) {
 			buttonWidth = space
 		}
 		button.SetLabelColor(f.buttonTextColor).
-			SetLabelColorActivated(f.buttonBackgroundColor).
-			SetBackgroundColorActivated(f.buttonTextColor).
+			SetLabelColorActivated(f.buttonTextColorActivated).
+			SetBackgroundColorActivated(f.buttonBackgroundColorActivated).
 			SetBackgroundColor(f.buttonBackgroundColor)
 
 		buttonIndex := index + len(f.items)
